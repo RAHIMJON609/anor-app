@@ -1,0 +1,331 @@
+import os
+from kivymd.app import MDApp
+from kivy.lang import Builder
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.core.window import Window
+from kivy.properties import StringProperty
+
+# Барои дуруст кор кардани клавиатура дар телефон
+Window.softinput_mode = "below_target"
+
+# Функсия барои пайдо кардани суроғаи аксҳо
+def get_path(filename):
+    return os.path.join(os.path.dirname(__file__), filename)
+
+KV = '''
+<ServiceCard@MDCard>:
+    padding: dp(12)
+    spacing: dp(5)
+    radius: [15,]
+    elevation: 1
+    orientation: 'vertical'
+    size_hint_y: None
+    height: dp(110)
+    md_bg_color: 1, 1, 1, 0.85
+    ripple_behavior: True
+
+<DrawerClickableItem@MDNavigationDrawerItem>:
+    focus_color: "#f4dede"
+    text_color: "#4a4939"
+    icon_color: "#4a4939"
+
+MDFloatLayout:
+    # АКСИ ЗАМИНА (Background)
+    Image:
+        id: bg_img
+        allow_stretch: True
+        keep_ratio: False
+        opacity: 0.2
+
+    MDNavigationLayout:
+        ScreenManager:
+            id: screen_manager
+            SplashScreen:
+            PinCodeScreen:
+            MainScreen:
+            GameScreen:
+
+        MDNavigationDrawer:
+            id: nav_drawer
+            radius: (0, dp(16), dp(16), 0)
+            width: dp(300)
+            
+            MDNavigationDrawerMenu:
+                MDNavigationDrawerHeader:
+                    title: "Алиев Суҳроб"
+                    text: "+992 900 00 00 00"
+                    spacing: "4dp"
+                    padding: "12dp", 0, 0, "32dp"
+                    Image:
+                        id: menu_logo
+                        size_hint: None, None
+                        size: dp(70), dp(70)
+
+                DrawerClickableItem:
+                    icon: "email-outline"
+                    text: "user@anor.tj (Почта)"
+                DrawerClickableItem:
+                    icon: "credit-card-plus"
+                    text: "Пайвасти корт"
+                MDNavigationDrawerDivider:
+                MDNavigationDrawerLabel:
+                    text: "Танзимот ва Идора"
+                DrawerClickableItem:
+                    icon: "volume-high"
+                    text: "Идораи овоз ва СМС"
+                DrawerClickableItem:
+                    icon: "controller-classic"
+                    text: "Ҷои бозиҳо (Онлайн)"
+                    on_release: 
+                        app.root.ids.screen_manager.current = "games"
+                        app.root.ids.nav_drawer.set_state("close")
+                DrawerClickableItem:
+                    icon: "newspaper-variant"
+                    text: "Ахбори тоза ва Тарофаҳо"
+                MDNavigationDrawerDivider:
+                MDNavigationDrawerLabel:
+                    text: "Алоқа ва Кумак"
+                DrawerClickableItem:
+                    icon: "whatsapp"
+                    text: "WhatsApp / Viber"
+                DrawerClickableItem:
+                    icon: "telegram"
+                    text: "Telegram / Instagram"
+                DrawerClickableItem:
+                    icon: "file-certificate-outline"
+                    text: "Помощь ва Лицензия"
+
+<SplashScreen>:
+    name: 'splash'
+    MDFloatLayout:
+        Image:
+            id: splash_logo
+            size_hint: None, None
+            size: dp(180), dp(180)
+            pos_hint: {"center_x": .5, "center_y": .8}
+        MDLabel:
+            text: "АНОР ОНЛАЙН"
+            halign: "center"
+            theme_text_color: "Custom"
+            text_color: 0.7, 0.1, 0.1, 1
+            font_style: "H4"
+            bold: True
+            pos_hint: {"center_y": .62}
+        MDBoxLayout:
+            orientation: 'vertical'
+            size_hint_x: .8
+            adaptive_height: True
+            pos_hint: {"center_x": .5, "center_y": .35}
+            spacing: dp(20)
+            MDTextField:
+                id: phone_input
+                hint_text: "Рақами телефон"
+                text: "+992 "
+                mode: "rectangle"
+            MDRaisedButton:
+                text: "ДАВОМ КАРДАН"
+                size_hint_x: 1
+                md_bg_color: 0.7, 0.1, 0.1, 1
+                on_release: root.manager.current = 'pin'
+
+<PinCodeScreen>:
+    name: 'pin'
+    MDFloatLayout:
+        MDLabel:
+            text: "Коди шахсиро ворид кунед"
+            halign: "center"
+            pos_hint: {"center_y": .7}
+            font_style: "H6"
+        MDTextField:
+            id: pin_field
+            hint_text: "Коди 4-рақама"
+            password: True
+            mode: "rectangle"
+            size_hint_x: .5
+            pos_hint: {"center_x": .5, "center_y": .55}
+            halign: "center"
+        MDRaisedButton:
+            text: "ВОРИД ШУДАН"
+            size_hint_x: .8
+            pos_hint: {"center_x": .5, "center_y": .4}
+            md_bg_color: 0.7, 0.1, 0.1, 1
+            on_release: root.manager.current = 'main'
+
+<MainScreen>:
+    name: 'main'
+    MDBoxLayout:
+        orientation: 'vertical'
+        md_bg_color: 0, 0, 0, 0
+        MDTopAppBar:
+            title: "Анор Онлайн"
+            elevation: 2
+            md_bg_color: 0.7, 0.1, 0.1, 1
+            left_action_items: [["menu", lambda x: app.root.ids.nav_drawer.set_state("open")]]
+            right_action_items: [["bell-outline", lambda x: x]]
+        ScrollView:
+            MDGridLayout:
+                cols: 1
+                adaptive_height: True
+                padding: dp(16)
+                spacing: dp(15)
+                MDCard:
+                    size_hint_y: None
+                    height: dp(120)
+                    radius: [20,]
+                    md_bg_color: 0.7, 0.1, 0.1, 0.92
+                    padding: dp(15)
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        MDLabel:
+                            text: "Баланси ҷорӣ"
+                            text_color: 1, 1, 1, 0.8
+                            theme_text_color: "Custom"
+                        MDLabel:
+                            text: "85.40 СМН"
+                            font_style: "H4"
+                            bold: True
+                            text_color: 1, 1, 1, 1
+                            theme_text_color: "Custom"
+                    MDIconButton:
+                        icon: "plus-circle"
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+                        icon_size: "40sp"
+                        pos_hint: {"center_y": .5}
+
+                MDLabel:
+                    text: "Боқимондаи тарофа"
+                    bold: True
+                    adaptive_height: True
+                MDGridLayout:
+                    cols: 2
+                    spacing: dp(12)
+                    adaptive_height: True
+                    ServiceCard:
+                        MDLabel:
+                            text: "1500"
+                            font_style: "H5"
+                            bold: True
+                            halign: "center"
+                        MDLabel:
+                            text: "МБ Интернет"
+                            halign: "center"
+                            font_style: "Caption"
+                    ServiceCard:
+                        MDLabel:
+                            text: "200"
+                            font_style: "H5"
+                            bold: True
+                            halign: "center"
+                        MDLabel:
+                            text: "Дақиқаҳо"
+                            halign: "center"
+                            font_style: "Caption"
+                    ServiceCard:
+                        MDLabel:
+                            text: "50"
+                            font_style: "H5"
+                            bold: True
+                            halign: "center"
+                        MDLabel:
+                            text: "СМС паёмак"
+                            halign: "center"
+                            font_style: "Caption"
+                    ServiceCard:
+                        MDLabel:
+                            text: "Белимит"
+                            font_style: "H6"
+                            bold: True
+                            halign: "center"
+                        MDLabel:
+                            text: "Занг дар шабака"
+                            halign: "center"
+                            font_style: "Caption"
+
+                MDLabel:
+                    text: "Хизматрасониҳо"
+                    bold: True
+                    adaptive_height: True
+                MDGridLayout:
+                    cols: 2
+                    spacing: dp(12)
+                    adaptive_height: True
+                    ServiceCard:
+                        MDLabel:
+                            text: "Балҳо ва Бонус"
+                            halign: "center"
+                            bold: True
+                    ServiceCard:
+                        MDLabel:
+                            text: "Тарофаҳои нав"
+                            halign: "center"
+                            bold: True
+                    ServiceCard:
+                        MDLabel:
+                            text: "Хизматҳои ман"
+                            halign: "center"
+                            bold: True
+                    ServiceCard:
+                        MDLabel:
+                            text: "Бастаҳои иловагӣ"
+                            halign: "center"
+                            bold: True
+        MDBoxLayout:
+            size_hint_y: None
+            height: dp(60)
+            md_bg_color: 1, 1, 1, 0.95
+            padding: dp(10)
+            MDFillRoundFlatButton:
+                text: "АСОСӢ"
+                icon: "home"
+                md_bg_color: 0.7, 0.1, 0.1, 1
+                pos_hint: {"center_x": .5}
+                size_hint_x: 0.8
+
+<GameScreen>:
+    name: 'games'
+    MDBoxLayout:
+        orientation: 'vertical'
+        MDTopAppBar:
+            title: "Бозиҳои Онлайн"
+            md_bg_color: 0.7, 0.1, 0.1, 1
+            left_action_items: [["arrow-left", lambda x: app.go_back()]]
+        MDLabel:
+            text: "Бозиҳои нав ба наздикӣ..."
+            halign: "center"
+
+<SplashScreen>:
+    on_enter: app.set_images()
+'''
+
+class SplashScreen(Screen): pass
+class PinCodeScreen(Screen): pass
+class MainScreen(Screen): pass
+class GameScreen(Screen): pass
+
+class AnorOnlineApp(MDApp):
+    def build(self):
+        self.theme_cls.primary_palette = "Red"
+        self.root_widget = Builder.load_string(KV)
+        return self.root_widget
+
+    def on_start(self):
+        # Аксҳоро маҳз ҳангоми ба кор даромадан танзим мекунем
+        self.set_images()
+
+    def set_images(self):
+        try:
+            # Танзими суроғаҳо барои аксҳои ту
+            self.root.ids.bg_img.source = get_path('background.jpg')
+            self.root.ids.menu_logo.source = get_path('logo.jpg')
+            # Кӯшиш мекунем ба SplashScreen дастрасӣ пайдо кунем
+            splash = self.root.ids.screen_manager.get_screen('splash')
+            splash.ids.splash_logo.source = get_path('logo.jpg')
+        except Exception as e:
+            print(f"Акс бор нашуд: {e}")
+
+    def go_back(self):
+        self.root.ids.screen_manager.current = "main"
+
+if __name__ == '__main__':
+    AnorOnlineApp().run()
