@@ -3,12 +3,13 @@ on: [push, pull_request]
 
 jobs:
   build:
-      runs-on: ubuntu-latest
-          steps:
-                - uses: actions/checkout@v2
-                      - name: Build with Buildozer
-                              uses: ArtemSerebrennkov/buildozer-action@v1
-                                      with:
-                                                buildozer_version: stable
-                                                          python_version: 3.8
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build with Buildozer
+        uses: ArtemSerebrennkov/buildozer-action@v1
+        with:
+          buildozer_version: stable
+          python_version: 3.10
+
                                                           
